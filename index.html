@@ -36,16 +36,16 @@
             letter-spacing: 0.08em; 
         }
 
-        /* Зернистость плёнки (улучшенная производительность) */
+        /* Зернистость плёнки */
         .film-grain::after {
             content: "";
             position: fixed;
             inset: 0;
-            background-image: url('молодые.jpg');
+            background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIj48ZmlsdGVyIGlkPSJuIj48ZmVUdXJidWxlbmNlIHR5cGU9ImZyYWN0YWxOb2lzZSIgYmFzZWZyZXF1ZW5jeT0iMC42NSIgbnVtT2N0YXZlcz0iMyIgc3RpdGNoVGlsZXM9InN0aXRjaCIvPjwvZmlsdGVyPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbHRlcj0idXJsKCMnKSIgb3BhY2l0eT0iMC4wOCIvPjwvc3ZnPg==');
             background-repeat: repeat;
             pointer-events: none;
             z-index: 200;
-            opacity: 0.25;
+            opacity: 0.2;
             mix-blend-mode: overlay;
         }
 
@@ -60,7 +60,7 @@
             transform: translateY(0);
         }
 
-        /* Главный блок: фото занимает всю площадь, текст всегда читаем */
+        /* Главный блок: оригинальное фото без фильтров */
         .hero-container {
             position: relative;
             min-height: 100dvh;
@@ -80,45 +80,45 @@
             height: 100%;
             object-fit: cover;
             object-position: center 30%;
-            filter: grayscale(0.4) brightness(0.45) contrast(1.08);
+            /* Убираем все фильтры затемнения */
+            filter: none;
             transition: transform 1.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             transform: scale(1);
         }
         .hero-container:hover .hero-image {
             transform: scale(1.08);
         }
-        /* Многослойный затемняющий оверлей для гарантированной читаемости текста на любом фото */
+        
+        /* Минимальный градиент для читаемости текста (не затемняет фото, только создает контраст для текста) */
         .hero-overlay {
             position: absolute;
             inset: 0;
-            background: radial-gradient(circle at 30% 40%, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.7) 70%, rgba(0,0,0,0.85) 100%);
+            background: linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.7) 100%);
             z-index: 1;
         }
-        .hero-overlay::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(135deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.7) 100%);
-            pointer-events: none;
-        }
-        /* Дополнительный контраст для текста (тени + мягкий глоу) */
+        
+        /* Тени для текста для читаемости на любом фото */
         .hero-text-glow {
-            text-shadow: 0 2px 12px rgba(0,0,0,0.6), 0 0 2px rgba(0,0,0,0.8);
+            text-shadow: 0 2px 20px rgba(0,0,0,0.8), 0 0 30px rgba(0,0,0,0.5);
         }
         .hero-sub-glow {
-            text-shadow: 0 1px 8px rgba(0,0,0,0.5);
+            text-shadow: 0 1px 12px rgba(0,0,0,0.7);
         }
+        
         .hero-frame {
             position: absolute;
             inset: 24px;
-            border: 1px solid rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.25);
             pointer-events: none;
             z-index: 2;
             transition: border-color 0.4s ease;
         }
         @media (max-width: 768px) {
             .hero-frame { inset: 12px; }
-            .hero-text-glow { text-shadow: 0 2px 10px rgba(0,0,0,0.7); }
+            .hero-text-glow { text-shadow: 0 2px 15px rgba(0,0,0,0.9); }
+            .hero-overlay {
+                background: linear-gradient(to bottom, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.35) 50%, rgba(0,0,0,0.65) 100%);
+            }
         }
 
         /* Таймер-блоки с мягким фоном */
@@ -128,7 +128,7 @@
             max-width: 82px;
             padding: 12px 6px;
             text-align: center;
-            background: rgba(0,0,0,0.45);
+            background: rgba(0,0,0,0.4);
             backdrop-filter: blur(8px);
             transition: all 0.3s ease;
             border-radius: 2px;
@@ -198,11 +198,12 @@
 </head>
 <body class="film-grain">
 
-    <!-- HERO: фото молодых занимает весь главный блок -->
+    <!-- HERO: фото молодых занимает весь главный блок без затемнений -->
     <section class="hero-container">
         <div class="hero-image-wrapper">
-            <!-- Фотография молодой пары (замените на свой файл "молодые.jpg" - код готов для любого изображения) -->
+            <!-- ОРИГИНАЛЬНОЕ ФОТО без фильтров -->
             <img class="hero-image" src="молодые.jpg" alt="Марк и Карина - молодая пара" loading="eager">
+            <!-- Легкий градиент только для читаемости текста, фото остается ярким -->
             <div class="hero-overlay"></div>
         </div>
         <div class="hero-frame"></div>
@@ -210,17 +211,17 @@
         <div class="relative z-10 w-full max-w-7xl mx-auto px-5 sm:px-8 md:px-12">
             <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-end">
                 <div class="md:col-span-9 reveal active">
-                    <p class="uppercase tracking-[0.7em] text-[9px] md:text-[11px] opacity-70 mb-6 border-b border-white/20 pb-4 inline-block italic hero-sub-glow">A Cinematic Experience · Премьера</p>
+                    <p class="uppercase tracking-[0.7em] text-[9px] md:text-[11px] opacity-80 mb-6 border-b border-white/30 pb-4 inline-block italic hero-sub-glow">A Cinematic Experience · Премьера</p>
                     <h1 class="text-7xl sm:text-8xl md:text-[130px] lg:text-[140px] leading-[0.8] serif italic font-light tracking-tighter hero-text-glow">
-                        Марк <br> <span class="md:ml-32 opacity-95">& Карина</span>
+                        Марк <br> <span class="md:ml-32">& Карина</span>
                     </h1>
                     <div class="mt-12 flex flex-wrap gap-10 md:gap-16">
                         <div class="hero-sub-glow">
-                            <p class="text-[9px] uppercase tracking-widest opacity-60 mb-1">Premiere Date</p>
+                            <p class="text-[9px] uppercase tracking-widest opacity-70 mb-1">Premiere Date</p>
                             <p class="serif italic text-xl md:text-2xl tracking-wide">24 Августа 2026</p>
                         </div>
                         <div class="hero-sub-glow">
-                            <p class="text-[9px] uppercase tracking-widest opacity-60 mb-1">Venue</p>
+                            <p class="text-[9px] uppercase tracking-widest opacity-70 mb-1">Venue</p>
                             <p class="serif italic text-xl md:text-2xl tracking-wide">Green Manor</p>
                         </div>
                     </div>
@@ -241,7 +242,7 @@
         <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-14 items-center reveal">
             <div class="order-2 md:order-1 relative group">
                 <div class="aspect-[4/5] bg-gray-200 overflow-hidden shadow-2xl">
-                    <img src="локация.jpg" alt="Усадьба Green Manor" class="w-full h-full object-cover transition duration-700 group-hover:scale-105 grayscale-[0.3]">
+                    <img src="локация.jpg" alt="Усадьба Green Manor" class="w-full h-full object-cover transition duration-700 group-hover:scale-105">
                 </div>
                 <div class="absolute -bottom-5 -left-5 bg-black text-white p-5 serif italic text-lg hidden md:block shadow-xl">Take One: The Venue</div>
             </div>
@@ -342,7 +343,7 @@
 
     <script>
         (function() {
-            // COUNTDOWN TIMER (24 августа 2026 16:30)
+            // COUNTDOWN TIMER
             const targetDate = new Date("August 24, 2026 16:30:00").getTime();
             
             function updateTimer() {
@@ -366,22 +367,22 @@
             }
             
             updateTimer();
-            setInterval(updateTimer, 60000); // обновление каждую минуту
+            setInterval(updateTimer, 60000);
             
-            // REVEAL ON SCROLL (плавное появление)
+            // REVEAL ON SCROLL
             const revealElements = document.querySelectorAll('.reveal');
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
                         entry.target.classList.add('active');
-                        observer.unobserve(entry.target); // после активации отключаем
+                        observer.unobserve(entry.target);
                     }
                 });
             }, { threshold: 0.15, rootMargin: "0px 0px -30px 0px" });
             
             revealElements.forEach(el => observer.observe(el));
             
-            // RSVP: улучшенные радио-кнопки с визуальным выделением
+            // RSVP radio buttons
             const radioYes = document.getElementById('attendYes');
             const radioNo = document.getElementById('attendNo');
             const labelYes = document.querySelector('label[for="attendYes"]');
@@ -412,7 +413,7 @@
                 updateRadioStyle();
             }
             
-            // Обработка формы (демо-уведомление)
+            // Form submission
             const rsvpForm = document.getElementById('rsvpForm');
             if(rsvpForm) {
                 rsvpForm.addEventListener('submit', function(e) {
@@ -428,16 +429,11 @@
                         alert('Пожалуйста, укажите ваше имя');
                         return;
                     }
-                    alert(`Спасибо, ${name || 'гость'}! Ваш ответ: ${attendanceStatus}. Ждём вас на премьере!`);
-                    // Опционально можно очистить или оставить
-                    // Имитация отправки — код для реальной интеграции можно добавить
+                    alert(`Спасибо, ${name}! Ваш ответ: ${attendanceStatus}. Ждём вас на премьере!`);
                 });
             }
             
-            // Плавность для изображений (адаптивность + дополнительная защита читаемости на hero)
-            // Для улучшения читаемости на любом фото добавим динамический контраст при необходимости,
-            // но оверлей уже делает текст контрастным.
-            // Также корректируем object-position на мобильных устройствах, чтобы лица оставались в кадре
+            // Hero image positioning
             const heroImg = document.querySelector('.hero-image');
             if(heroImg && window.innerWidth <= 768) {
                 heroImg.style.objectPosition = 'center 25%';
@@ -449,7 +445,7 @@
                 }
             });
             
-            // Дополнительная адаптивность: плавный скролл якорей (если используются)
+            // Smooth scroll
             document.querySelectorAll('a[href^="#"]').forEach(anchor => {
                 anchor.addEventListener('click', function(e) {
                     const hash = this.getAttribute('href');
@@ -462,8 +458,6 @@
                 });
             });
             
-            // Для большей плавности: инициализация анимации активных блоков, которые уже видны
-            // Принудительно проверяем первый экран
             setTimeout(() => {
                 revealElements.forEach(el => {
                     const rect = el.getBoundingClientRect();
