@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="ru" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>THE PREMIERE | МАРК & КАРИНА</title>
+    <meta name="description" content="Свадебная премьера Марка и Карины. 24 августа 2026, Green Manor. Элегантный вечер в стиле классического кино.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,400;1,500&family=Tenor+Sans&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root { 
+            --black: #050505; 
+            --white: #FBFBFB; 
+            --gray: #a0a0a0;
+            --gold: #c2a575;
+        }
+
+        body { 
+            font-family: 'Tenor Sans', sans-serif; 
+            background-color: var(--black); 
+            color: var(--white); 
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, .serif { 
+            font-family: 'Cormorant Garamond', serif; 
+            text-transform: uppercase; 
+            letter-spacing: 0.08em; 
+        }
+
+        /* Зернистость плёнки (улучшенная производительность) */
+        .film-grain::after {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background-image: url('молодые.jpg');
+            background-repeat: repeat;
+            pointer-events: none;
+            z-index: 200;
+            opacity: 0.25;
+            mix-blend-mode: overlay;
+        }
+
+        /* Плавное появление */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 1.1s cubic-bezier(0.2, 0.9, 0.4, 1.1), transform 1s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Главный блок: фото занимает всю площадь, текст всегда читаем */
+        .hero-container {
+            position: relative;
+            min-height: 100dvh;
+            background-color: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        .hero-image-wrapper {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+        }
+        .hero-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center 30%;
+            filter: grayscale(0.4) brightness(0.45) contrast(1.08);
+            transition: transform 1.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            transform: scale(1);
+        }
+        .hero-container:hover .hero-image {
+            transform: scale(1.08);
+        }
+        /* Многослойный затемняющий оверлей для гарантированной читаемости текста на любом фото */
+        .hero-overlay {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 30% 40%, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.7) 70%, rgba(0,0,0,0.85) 100%);
+            z-index: 1;
+        }
+        .hero-overlay::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.7) 100%);
+            pointer-events: none;
+        }
+        /* Дополнительный контраст для текста (тени + мягкий глоу) */
+        .hero-text-glow {
+            text-shadow: 0 2px 12px rgba(0,0,0,0.6), 0 0 2px rgba(0,0,0,0.8);
+        }
+        .hero-sub-glow {
+            text-shadow: 0 1px 8px rgba(0,0,0,0.5);
+        }
+        .hero-frame {
+            position: absolute;
+            inset: 24px;
+            border: 1px solid rgba(255,255,255,0.2);
+            pointer-events: none;
+            z-index: 2;
+            transition: border-color 0.4s ease;
+        }
+        @media (max-width: 768px) {
+            .hero-frame { inset: 12px; }
+            .hero-text-glow { text-shadow: 0 2px 10px rgba(0,0,0,0.7); }
+        }
+
+        /* Таймер-блоки с мягким фоном */
+        .timer-unit {
+            border: 1px solid rgba(255,255,255,0.2);
+            flex: 1;
+            max-width: 82px;
+            padding: 12px 6px;
+            text-align: center;
+            background: rgba(0,0,0,0.45);
+            backdrop-filter: blur(8px);
+            transition: all 0.3s ease;
+            border-radius: 2px;
+        }
+        .timer-unit:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: rgba(255,255,255,0.4);
+            transform: translateY(-2px);
+        }
+        @media (max-width: 640px) {
+            .timer-unit { max-width: 68px; padding: 8px 4px; }
+        }
+
+        /* Линия расписания */
+        .timing-row {
+            position: relative;
+            padding-bottom: 36px;
+            border-left: 1px solid rgba(255,255,255,0.2);
+            margin-left: 16px;
+            padding-left: 34px;
+            transition: border-color 0.2s;
+        }
+        .timing-row::before {
+            content: '';
+            position: absolute;
+            left: -7px;
+            top: 6px;
+            width: 12px;
+            height: 12px;
+            background: var(--white);
+            border-radius: 50%;
+            opacity: 0.7;
+            box-shadow: 0 0 6px rgba(255,255,255,0.5);
+            transition: transform 0.2s;
+        }
+        .timing-row:hover::before {
+            transform: scale(1.2);
+            background: var(--gold);
+        }
+
+        /* кастомные радио кнопки */
+        .rsvp-card {
+            transition: all 0.25s ease;
+        }
+        .rsvp-card.selected {
+            background: white;
+            color: black;
+            border-color: white;
+        }
+        .rsvp-card.selected span {
+            color: black;
+        }
+        input.custom-radio:checked + label {
+            background: white;
+            color: black;
+            border-color: white;
+        }
+
+        /* плавные переходы */
+        a, button, .timer-unit, .rsvp-card {
+            transition: all 0.35s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        }
+        img {
+            transition: opacity 0.5s ease;
+        }
+    </style>
+</head>
+<body class="film-grain">
+
+    <!-- HERO: фото молодых занимает весь главный блок -->
+    <section class="hero-container">
+        <div class="hero-image-wrapper">
+            <!-- Фотография молодой пары (замените на свой файл "молодые.jpg" - код готов для любого изображения) -->
+            <img class="hero-image" src="локация.jpg" alt="Марк и Карина - молодая пара" loading="eager">
+            <div class="hero-overlay"></div>
+        </div>
+        <div class="hero-frame"></div>
+        
+        <div class="relative z-10 w-full max-w-7xl mx-auto px-5 sm:px-8 md:px-12">
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-end">
+                <div class="md:col-span-9 reveal active">
+                    <p class="uppercase tracking-[0.7em] text-[9px] md:text-[11px] opacity-70 mb-6 border-b border-white/20 pb-4 inline-block italic hero-sub-glow">A Cinematic Experience · Премьера</p>
+                    <h1 class="text-7xl sm:text-8xl md:text-[130px] lg:text-[140px] leading-[0.8] serif italic font-light tracking-tighter hero-text-glow">
+                        Марк <br> <span class="md:ml-32 opacity-95">& Карина</span>
+                    </h1>
+                    <div class="mt-12 flex flex-wrap gap-10 md:gap-16">
+                        <div class="hero-sub-glow">
+                            <p class="text-[9px] uppercase tracking-widest opacity-60 mb-1">Premiere Date</p>
+                            <p class="serif italic text-xl md:text-2xl tracking-wide">24 Августа 2026</p>
+                        </div>
+                        <div class="hero-sub-glow">
+                            <p class="text-[9px] uppercase tracking-widest opacity-60 mb-1">Venue</p>
+                            <p class="serif italic text-xl md:text-2xl tracking-wide">Green Manor</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="md:col-span-3 reveal active pt-10 md:pt-0" style="transition-delay: 0.3s;">
+                    <div id="countdown" class="flex gap-3 justify-start md:justify-end">
+                        <div class="timer-unit"><span id="days" class="text-3xl md:text-5xl block serif italic font-light tracking-wide">00</span><span class="text-[8px] uppercase opacity-60 tracking-widest">Дней</span></div>
+                        <div class="timer-unit"><span id="hours" class="text-3xl md:text-5xl block serif italic font-light">00</span><span class="text-[8px] uppercase opacity-60 tracking-widest">Часов</span></div>
+                        <div class="timer-unit"><span id="minutes" class="text-3xl md:text-5xl block serif italic font-light">00</span><span class="text-[8px] uppercase opacity-60 tracking-widest">Минут</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Локация (усадьба) -->
+    <section class="py-24 px-6 md:py-36 bg-white text-black">
+        <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-14 items-center reveal">
+            <div class="order-2 md:order-1 relative group">
+                <div class="aspect-[4/5] bg-gray-200 overflow-hidden shadow-2xl">
+                    <img src="https://images.unsplash.com/photo-1464366400600-7168b9af2bc3?w=1200&h=1000&fit=crop&q=85" alt="Усадьба Green Manor" class="w-full h-full object-cover transition duration-700 group-hover:scale-105 grayscale-[0.3]">
+                </div>
+                <div class="absolute -bottom-5 -left-5 bg-black text-white p-5 serif italic text-lg hidden md:block shadow-xl">Take One: The Venue</div>
+            </div>
+            <div class="space-y-8 order-1 md:order-2">
+                <h3 class="text-xs tracking-[0.45em] text-gray-500 uppercase italic">Location · Съёмочная площадка</h3>
+                <h2 class="text-5xl md:text-7xl serif italic leading-[1.1]">Усадьба <br> Green Manor</h2>
+                <p class="text-lg opacity-75 leading-relaxed font-light">Лесной проезд, 15. Пространство, где встречаются классика и наше будущее. Ждём вас к началу первого кадра.</p>
+                <a href="https://yandex.ru/maps/?text=Лесной+проезд+15" target="_blank" rel="noopener" class="group inline-flex items-center gap-4 px-10 py-5 bg-black text-white text-[10px] uppercase tracking-[0.3em] hover:bg-zinc-800 transition-all hover:gap-6">
+                    Открыть карту <span class="group-hover:translate-x-1 transition-transform">→</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Программа вечера -->
+    <section class="py-24 px-6 md:py-36 border-b border-white/10 bg-[#0a0a0a]">
+        <div class="max-w-3xl mx-auto reveal">
+            <h3 class="text-center text-xs tracking-[0.6em] text-gray-400 mb-20 uppercase italic">The Schedule · Тайминг</h3>
+            <div class="space-y-3">
+                <div class="timing-row">
+                    <span class="serif italic text-4xl text-white/30 block mb-2">16:30</span>
+                    <h4 class="text-2xl font-light tracking-widest uppercase italic">Aperitif & Jazz</h4>
+                    <p class="text-sm opacity-50 font-light">Сбор гостей под аккомпанемент живого оркестра. Легкие закуски.</p>
+                </div>
+                <div class="timing-row">
+                    <span class="serif italic text-4xl text-white/30 block mb-2">17:30</span>
+                    <h4 class="text-2xl font-light tracking-widest uppercase italic">Main Scene · Церемония</h4>
+                    <p class="text-sm opacity-50 font-light">Обмен клятвами. Рекомендуем выключить звук телефонов.</p>
+                </div>
+                <div class="timing-row" style="border-left-color: rgba(255,255,255,0.15);">
+                    <span class="serif italic text-4xl text-white/30 block mb-2">19:00</span>
+                    <h4 class="text-2xl font-light tracking-widest uppercase italic">Dinner & Afterparty</h4>
+                    <p class="text-sm opacity-50 font-light">Гала-ужин, тосты, танцы до финальных титров.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Дресс-код -->
+    <section class="py-24 px-6 md:py-36 bg-white text-black text-center">
+        <div class="max-w-5xl mx-auto reveal">
+            <h3 class="text-xs tracking-[0.6em] text-gray-500 mb-8 uppercase italic">Wardrobe Dept.</h3>
+            <h2 class="text-5xl md:text-7xl serif italic mb-10 leading-tight">Дресс-код</h2>
+            <p class="text-lg md:text-xl font-light italic max-w-2xl mx-auto leading-relaxed mb-16">
+                Стиль вечера — <span class="font-bold underline decoration-gray-400">Black Tie Optional</span>. Просим поддержать атмосферу классического кино в черно-белой палитре.
+            </p>
+            <div class="grid md:grid-cols-2 gap-8 text-left">
+                <div class="p-8 border border-black/10 bg-gray-50 flex flex-col justify-between transition-all hover:shadow-md hover:-translate-y-1">
+                    <h4 class="serif italic text-2xl mb-4 tracking-wide">Для дам</h4>
+                    <p class="text-sm opacity-70 font-light leading-relaxed">Вечерние платья в пол или коктейльные варианты. Элегантность в каждой детали.</p>
+                </div>
+                <div class="p-8 border border-black/10 bg-gray-50 flex flex-col justify-between transition-all hover:shadow-md hover:-translate-y-1">
+                    <h4 class="serif italic text-2xl mb-4 tracking-wide">Для кавалеров</h4>
+                    <p class="text-sm opacity-70 font-light leading-relaxed">Смокинги или классические костюмы. Лаконичность и строгий стиль.</p>
+                </div>
+            </div>
+            <div class="mt-12 flex justify-center gap-6">
+                <div class="w-9 h-9 rounded-full bg-black shadow-md"></div>
+                <div class="w-9 h-9 rounded-full bg-zinc-600 shadow-md"></div>
+                <div class="w-9 h-9 rounded-full bg-white border border-gray-300 shadow-md"></div>
+                <div class="w-9 h-9 rounded-full bg-[#c0a080] shadow-md"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- RSVP / Подтверждение -->
+    <section id="rsvp" class="py-24 px-6 md:py-36 bg-[#050505] text-white">
+        <div class="max-w-xl mx-auto text-center reveal">
+            <h2 class="text-6xl md:text-8xl serif italic mb-8 uppercase tracking-tighter">Билет</h2>
+            <p class="text-sm opacity-50 italic mb-12 tracking-wide">Пожалуйста, подтвердите ваше присутствие</p>
+            <form id="rsvpForm" class="space-y-10">
+                <input type="text" placeholder="Ваше полное имя" required class="w-full bg-transparent border-b border-white/30 p-4 text-xl serif focus:outline-none focus:border-white transition-all placeholder:text-zinc-600 text-white">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                    <div class="rsvp-card-wrapper">
+                        <input type="radio" name="attendance" id="attendYes" value="yes" class="hidden custom-radio">
+                        <label for="attendYes" class="block p-6 border border-white/20 cursor-pointer hover:bg-white hover:text-black transition-all serif italic text-xl text-center rsvp-card">
+                            <span class="uppercase text-xs tracking-widest block">Приду ✧</span>
+                        </label>
+                    </div>
+                    <div class="rsvp-card-wrapper">
+                        <input type="radio" name="attendance" id="attendNo" value="no" class="hidden custom-radio">
+                        <label for="attendNo" class="block p-6 border border-white/20 cursor-pointer hover:bg-white hover:text-black transition-all serif italic text-xl text-center rsvp-card">
+                            <span class="uppercase text-xs tracking-widest block">Не смогу</span>
+                        </label>
+                    </div>
+                </div>
+                <button type="submit" class="w-full bg-white text-black p-6 uppercase tracking-[0.4em] text-[11px] font-bold hover:bg-gray-200 transition-all hover:tracking-[0.5em]">
+                    Отправить ответ
+                </button>
+                <p class="text-[10px] opacity-40 mt-4">* Ваш ответ поможет нам создать идеальный вечер</p>
+            </form>
+        </div>
+    </section>
+
+    <footer class="py-16 text-center border-t border-white/10 opacity-40 text-[9px] uppercase tracking-[0.6em] font-light">
+        The End / Directed by Love / 2026
+    </footer>
+
+    <script>
+        (function() {
+            // COUNTDOWN TIMER (24 августа 2026 16:30)
+            const targetDate = new Date("August 24, 2026 16:30:00").getTime();
+            
+            function updateTimer() {
+                const now = new Date().getTime();
+                const distance = targetDate - now;
+                
+                if (distance < 0) {
+                    document.getElementById("days").innerText = "00";
+                    document.getElementById("hours").innerText = "00";
+                    document.getElementById("minutes").innerText = "00";
+                    return;
+                }
+                
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                
+                document.getElementById("days").innerText = days.toString().padStart(2, '0');
+                document.getElementById("hours").innerText = hours.toString().padStart(2, '0');
+                document.getElementById("minutes").innerText = minutes.toString().padStart(2, '0');
+            }
+            
+            updateTimer();
+            setInterval(updateTimer, 60000); // обновление каждую минуту
+            
+            // REVEAL ON SCROLL (плавное появление)
+            const revealElements = document.querySelectorAll('.reveal');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                        observer.unobserve(entry.target); // после активации отключаем
+                    }
+                });
+            }, { threshold: 0.15, rootMargin: "0px 0px -30px 0px" });
+            
+            revealElements.forEach(el => observer.observe(el));
+            
+            // RSVP: улучшенные радио-кнопки с визуальным выделением
+            const radioYes = document.getElementById('attendYes');
+            const radioNo = document.getElementById('attendNo');
+            const labelYes = document.querySelector('label[for="attendYes"]');
+            const labelNo = document.querySelector('label[for="attendNo"]');
+            
+            function updateRadioStyle() {
+                if(radioYes.checked) {
+                    labelYes.classList.add('selected', 'bg-white', 'text-black');
+                    labelNo.classList.remove('selected', 'bg-white', 'text-black');
+                    labelNo.classList.add('border-white/20');
+                    labelYes.classList.remove('border-white/20');
+                } else if(radioNo.checked) {
+                    labelNo.classList.add('selected', 'bg-white', 'text-black');
+                    labelYes.classList.remove('selected', 'bg-white', 'text-black');
+                    labelYes.classList.add('border-white/20');
+                    labelNo.classList.remove('border-white/20');
+                } else {
+                    labelYes.classList.remove('selected', 'bg-white', 'text-black');
+                    labelNo.classList.remove('selected', 'bg-white', 'text-black');
+                    labelYes.classList.add('border-white/20');
+                    labelNo.classList.add('border-white/20');
+                }
+            }
+            
+            if(radioYes && radioNo) {
+                radioYes.addEventListener('change', updateRadioStyle);
+                radioNo.addEventListener('change', updateRadioStyle);
+                updateRadioStyle();
+            }
+            
+            // Обработка формы (демо-уведомление)
+            const rsvpForm = document.getElementById('rsvpForm');
+            if(rsvpForm) {
+                rsvpForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    const nameInput = document.querySelector('#rsvpForm input[type="text"]');
+                    const name = nameInput ? nameInput.value.trim() : '';
+                    let attendanceStatus = '';
+                    if(radioYes.checked) attendanceStatus = 'приду';
+                    else if(radioNo.checked) attendanceStatus = 'не смогу';
+                    else attendanceStatus = 'не выбрано';
+                    
+                    if(!name) {
+                        alert('Пожалуйста, укажите ваше имя');
+                        return;
+                    }
+                    alert(`Спасибо, ${name || 'гость'}! Ваш ответ: ${attendanceStatus}. Ждём вас на премьере!`);
+                    // Опционально можно очистить или оставить
+                    // Имитация отправки — код для реальной интеграции можно добавить
+                });
+            }
+            
+            // Плавность для изображений (адаптивность + дополнительная защита читаемости на hero)
+            // Для улучшения читаемости на любом фото добавим динамический контраст при необходимости,
+            // но оверлей уже делает текст контрастным.
+            // Также корректируем object-position на мобильных устройствах, чтобы лица оставались в кадре
+            const heroImg = document.querySelector('.hero-image');
+            if(heroImg && window.innerWidth <= 768) {
+                heroImg.style.objectPosition = 'center 25%';
+            }
+            window.addEventListener('resize', function() {
+                if(heroImg) {
+                    if(window.innerWidth <= 768) heroImg.style.objectPosition = 'center 25%';
+                    else heroImg.style.objectPosition = 'center 30%';
+                }
+            });
+            
+            // Дополнительная адаптивность: плавный скролл якорей (если используются)
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    const hash = this.getAttribute('href');
+                    if(hash === "#" || hash === "") return;
+                    const targetEl = document.querySelector(hash);
+                    if(targetEl) {
+                        e.preventDefault();
+                        targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                });
+            });
+            
+            // Для большей плавности: инициализация анимации активных блоков, которые уже видны
+            // Принудительно проверяем первый экран
+            setTimeout(() => {
+                revealElements.forEach(el => {
+                    const rect = el.getBoundingClientRect();
+                    if(rect.top < window.innerHeight - 100) {
+                        el.classList.add('active');
+                    }
+                });
+            }, 200);
+        })();
+    </script>
+</body>
+</html>
